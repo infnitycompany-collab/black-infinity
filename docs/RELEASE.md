@@ -2,6 +2,8 @@
 
 ## Verified locally
 
+- Published GitHub Actions run 40716749108 passed installation, build, type checks, tests and browser verification on Linux.
+- Production browser smoke passed nonce CSP without unsafe-eval, client hydration, Arabic switching, anonymous access denial and install assets. This does not validate a production database or object store.
 - TypeScript check and production build.
 - Six unit/integration tests: ranges, price/levels, network-address blocking, database-backed reward idempotency/budget protection, client crypto/recovery/sharing/tampering.
 - Chromium end-to-end test: real virtual-authenticator passkey ceremony, managed and encrypted playback, interrupted encrypted upload resume after reload, recipient fingerprint mismatch rejection and recipient decryption, 720p processing, cross-account denial, share/revoke, origin rejection, RTL, overview accessibility, offline fallback, recovery rotation, passkey replacement, delegated-role restrictions, moderation and account deletion.

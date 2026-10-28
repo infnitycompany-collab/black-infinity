@@ -34,14 +34,14 @@ async function handler(
       return json({
         status: "ok",
         version: "0.1.0",
-        database: "configured",
+        database: "not_checked",
         cashCommissions: false,
         payments: false,
       });
     if (parts[0] === "auth" && method === "POST")
       return await auth(req, parts.slice(1).join("/"));
-    const db = await database();
     if (parts[0] === "posts" && method === "GET") {
+      const db = await database();
       if (parts[1])
         return json({
           post:
@@ -67,6 +67,7 @@ async function handler(
       return await managedStream(req, link!, link!.charged_user);
     }
     const u = await user(req);
+    const db = await database();
     await limit(`account:${u.id}`, 900, 60);
     if (path === "notifications/events" && method === "GET") {
       let timer: ReturnType<typeof setInterval> | undefined,
