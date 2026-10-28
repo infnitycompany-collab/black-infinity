@@ -1,0 +1,49 @@
+services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: blackinfinity
+      POSTGRES_USER: blackinfinity
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a unique database password}
+    volumes: ["postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U blackinfinity"]
+      interval: 10s
+      retries: 10
+    restart: unless-stopped
+  web:
+    build: {context: ., target: runner}
+    env_file: .env.deploy
+    depends_on:
+      database: {condition: service_healthy}
+    expose: ["3000"]
+    read_only: true
+    tmpfs: ["/tmp:size=128m"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+  worker:
+    build: {context: ., target: worker}
+    env_file: .env.deploy
+    depends_on:
+      database: {condition: service_healthy}
+    read_only: true
+    tmpfs: ["/tmp:size=3g,mode=1777"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 2g
+    cpus: 1
+    pids_limit: 128
+    restart: unless-stopped
+  gateway:
+    image: caddy:2-alpine
+    environment:
+      APP_HOST: ${APP_HOST:?Set your HTTPS hostname}
+    ports: ["80:80", "443:443"]
+    volumes: ["./ops/Caddyfile:/etc/caddy/Caddyfile:ro", "caddy_data:/data", "caddy_config:/config"]
+    depends_on: [web]
+    restart: unless-stopped
+volumes:
+  postgres:
+  caddy_data:
+  caddy_config:

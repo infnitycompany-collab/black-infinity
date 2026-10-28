@@ -1,0 +1,4 @@
+import fs from 'node:fs/promises';
+const {uploads,files}=JSON.parse(await fs.readFile(process.argv[2],'utf8'));let index=0;const results=[];
+async function worker(){while(index<files.length){const i=index++,file=files[i],upload=uploads[i];try{const url=upload.submitUrl||upload.uploadUrl||upload.url;const response=await fetch(url,{method:'POST',headers:{'Content-Type':'image/png'},body:await fs.readFile(file.path)});if(!response.ok)throw new Error(String(response.status));let data;try{data=await response.json();}catch{data={};}results.push({name:file.name,ok:true,result:data});console.log('Uploaded '+file.name);}catch{results.push({name:file.name,ok:false});console.log('Upload failed: '+file.name);}}}
+await Promise.all(Array.from({length:4},worker));await fs.writeFile(process.argv[2]+'.results.json',JSON.stringify(results));console.log(`${results.filter(r=>r.ok).length}/${files.length} uploaded`);if(results.some(r=>!r.ok))process.exitCode=1;

@@ -1,0 +1,523 @@
+{
+  "fileKey": "PndV8YDm0JEuLccfOe7kfb",
+  "fileUrl": "https://www.figma.com/design/PndV8YDm0JEuLccfOe7kfb",
+  "editablePageId": "5:2",
+  "photoProofPageId": "10:2",
+  "screens": [
+    {
+      "key": "library",
+      "variant": "Desktop",
+      "id": "7:736",
+      "width": 1440,
+      "height": 1080
+    },
+    {
+      "key": "library",
+      "variant": "iPad",
+      "id": "7:790",
+      "width": 768,
+      "height": 1080
+    },
+    {
+      "key": "library",
+      "variant": "Mobile",
+      "id": "7:844",
+      "width": 375,
+      "height": 540.5
+    },
+    {
+      "key": "vault",
+      "variant": "Desktop",
+      "id": "7:863",
+      "width": 1440,
+      "height": 1080
+    },
+    {
+      "key": "vault",
+      "variant": "iPad",
+      "id": "7:920",
+      "width": 768,
+      "height": 1080
+    },
+    {
+      "key": "vault",
+      "variant": "Mobile",
+      "id": "7:977",
+      "width": 375,
+      "height": 660
+    },
+    {
+      "key": "favorites",
+      "variant": "Desktop",
+      "id": "7:999",
+      "width": 1440,
+      "height": 1080
+    },
+    {
+      "key": "favorites",
+      "variant": "iPad",
+      "id": "7:1053",
+      "width": 768,
+      "height": 1080
+    },
+    {
+      "key": "favorites",
+      "variant": "Mobile",
+      "id": "7:1107",
+      "width": 375,
+      "height": 540.5
+    },
+    {
+      "key": "overview",
+      "variant": "Desktop",
+      "id": "8:104",
+      "width": 1440,
+      "height": 1324
+    },
+    {
+      "key": "overview",
+      "variant": "iPad",
+      "id": "8:188",
+      "width": 768,
+      "height": 1215
+    },
+    {
+      "key": "overview",
+      "variant": "Mobile",
+      "id": "8:272",
+      "width": 375,
+      "height": 1496.5
+    },
+    {
+      "key": "partners",
+      "variant": "Desktop",
+      "id": "8:318",
+      "width": 1440,
+      "height": 1176.5
+    },
+    {
+      "key": "partners",
+      "variant": "iPad",
+      "id": "8:386",
+      "width": 768,
+      "height": 1176.5
+    },
+    {
+      "key": "partners",
+      "variant": "Mobile",
+      "id": "8:454",
+      "width": 375,
+      "height": 1059
+    },
+    {
+      "key": "connections",
+      "variant": "Desktop",
+      "id": "8:487",
+      "width": 1440,
+      "height": 1080
+    },
+    {
+      "key": "connections",
+      "variant": "iPad",
+      "id": "8:550",
+      "width": 768,
+      "height": 1080
+    },
+    {
+      "key": "connections",
+      "variant": "Mobile",
+      "id": "8:613",
+      "width": 375,
+      "height": 924
+    },
+    {
+      "key": "privacy",
+      "variant": "Desktop",
+      "id": "8:641",
+      "width": 1440,
+      "height": 2022
+    },
+    {
+      "key": "privacy",
+      "variant": "iPad",
+      "id": "8:735",
+      "width": 768,
+      "height": 2022
+    },
+    {
+      "key": "privacy",
+      "variant": "Mobile",
+      "id": "8:829",
+      "width": 375,
+      "height": 1874.5
+    },
+    {
+      "key": "settings",
+      "variant": "Desktop",
+      "id": "8:888",
+      "width": 1440,
+      "height": 1080
+    },
+    {
+      "key": "settings",
+      "variant": "iPad",
+      "id": "8:945",
+      "width": 768,
+      "height": 1080
+    },
+    {
+      "key": "settings",
+      "variant": "Mobile",
+      "id": "8:1002",
+      "width": 375,
+      "height": 646
+    },
+    {
+      "key": "playlists",
+      "variant": "Desktop",
+      "id": "8:1024",
+      "width": 1440,
+      "height": 1080
+    },
+    {
+      "key": "playlists",
+      "variant": "iPad",
+      "id": "8:1083",
+      "width": 768,
+      "height": 1080
+    },
+    {
+      "key": "playlists",
+      "variant": "Mobile",
+      "id": "8:1142",
+      "width": 375,
+      "height": 700.5
+    },
+    {
+      "key": "shared",
+      "variant": "Desktop",
+      "id": "8:1166",
+      "width": 1440,
+      "height": 1080
+    },
+    {
+      "key": "shared",
+      "variant": "iPad",
+      "id": "8:1220",
+      "width": 768,
+      "height": 1080
+    },
+    {
+      "key": "shared",
+      "variant": "Mobile",
+      "id": "8:1274",
+      "width": 375,
+      "height": 565.5
+    },
+    {
+      "key": "trash",
+      "variant": "Desktop",
+      "id": "8:1293",
+      "width": 1440,
+      "height": 1080
+    },
+    {
+      "key": "trash",
+      "variant": "iPad",
+      "id": "8:1347",
+      "width": 768,
+      "height": 1080
+    },
+    {
+      "key": "trash",
+      "variant": "Mobile",
+      "id": "8:1401",
+      "width": 375,
+      "height": 565.5
+    },
+    {
+      "key": "rewards",
+      "variant": "Desktop",
+      "id": "8:1420",
+      "width": 1440,
+      "height": 1143
+    },
+    {
+      "key": "rewards",
+      "variant": "iPad",
+      "id": "8:1486",
+      "width": 768,
+      "height": 1143
+    },
+    {
+      "key": "rewards",
+      "variant": "Mobile",
+      "id": "8:1552",
+      "width": 375,
+      "height": 1016.5
+    },
+    {
+      "key": "notifications",
+      "variant": "Desktop",
+      "id": "8:1583",
+      "width": 1440,
+      "height": 1080
+    },
+    {
+      "key": "notifications",
+      "variant": "iPad",
+      "id": "8:1637",
+      "width": 768,
+      "height": 1080
+    },
+    {
+      "key": "notifications",
+      "variant": "Mobile",
+      "id": "8:1691",
+      "width": 375,
+      "height": 565.5
+    },
+    {
+      "key": "admin",
+      "variant": "Desktop",
+      "id": "8:1710",
+      "width": 1440,
+      "height": 2079
+    },
+    {
+      "key": "admin",
+      "variant": "iPad",
+      "id": "8:1806",
+      "width": 768,
+      "height": 2079
+    },
+    {
+      "key": "admin",
+      "variant": "Mobile",
+      "id": "8:1902",
+      "width": 375,
+      "height": 1931.5
+    },
+    {
+      "key": "home",
+      "variant": "Desktop",
+      "id": "8:1963",
+      "width": 1440,
+      "height": 1450.5
+    },
+    {
+      "key": "home",
+      "variant": "iPad",
+      "id": "8:1991",
+      "width": 768,
+      "height": 1450.5
+    },
+    {
+      "key": "home",
+      "variant": "Mobile",
+      "id": "8:2019",
+      "width": 375,
+      "height": 1160
+    },
+    {
+      "key": "pricing",
+      "variant": "Desktop",
+      "id": "8:2047",
+      "width": 1440,
+      "height": 1489.5
+    },
+    {
+      "key": "pricing",
+      "variant": "iPad",
+      "id": "8:2094",
+      "width": 768,
+      "height": 1489.5
+    },
+    {
+      "key": "pricing",
+      "variant": "Mobile",
+      "id": "8:2141",
+      "width": 375,
+      "height": 1374
+    },
+    {
+      "key": "blog",
+      "variant": "Desktop",
+      "id": "8:2188",
+      "width": 1440,
+      "height": 628
+    },
+    {
+      "key": "blog",
+      "variant": "iPad",
+      "id": "8:2205",
+      "width": 768,
+      "height": 628
+    },
+    {
+      "key": "blog",
+      "variant": "Mobile",
+      "id": "8:2222",
+      "width": 375,
+      "height": 522.5
+    },
+    {
+      "key": "trust",
+      "variant": "Desktop",
+      "id": "8:2239",
+      "width": 1440,
+      "height": 1275.5
+    },
+    {
+      "key": "trust",
+      "variant": "iPad",
+      "id": "8:2271",
+      "width": 768,
+      "height": 1275.5
+    },
+    {
+      "key": "trust",
+      "variant": "Mobile",
+      "id": "8:2303",
+      "width": 375,
+      "height": 1120
+    },
+    {
+      "key": "terms",
+      "variant": "Desktop",
+      "id": "8:2335",
+      "width": 1440,
+      "height": 887
+    },
+    {
+      "key": "terms",
+      "variant": "iPad",
+      "id": "8:2358",
+      "width": 768,
+      "height": 887
+    },
+    {
+      "key": "terms",
+      "variant": "Mobile",
+      "id": "8:2381",
+      "width": 375,
+      "height": 761.5
+    },
+    {
+      "key": "retention",
+      "variant": "Desktop",
+      "id": "8:2404",
+      "width": 1440,
+      "height": 1016.5
+    },
+    {
+      "key": "retention",
+      "variant": "iPad",
+      "id": "8:2430",
+      "width": 768,
+      "height": 1016.5
+    },
+    {
+      "key": "retention",
+      "variant": "Mobile",
+      "id": "8:2456",
+      "width": 375,
+      "height": 881
+    },
+    {
+      "key": "login",
+      "variant": "Desktop",
+      "id": "8:2482",
+      "width": 1440,
+      "height": 757.5
+    },
+    {
+      "key": "login",
+      "variant": "iPad",
+      "id": "8:2502",
+      "width": 768,
+      "height": 757.5
+    },
+    {
+      "key": "login",
+      "variant": "Mobile",
+      "id": "8:2522",
+      "width": 375,
+      "height": 642
+    },
+    {
+      "key": "register",
+      "variant": "Desktop",
+      "id": "8:2542",
+      "width": 1440,
+      "height": 817.5
+    },
+    {
+      "key": "register",
+      "variant": "iPad",
+      "id": "8:2566",
+      "width": 768,
+      "height": 817.5
+    },
+    {
+      "key": "register",
+      "variant": "Mobile",
+      "id": "8:2590",
+      "width": 375,
+      "height": 712
+    },
+    {
+      "key": "recover",
+      "variant": "Desktop",
+      "id": "8:2614",
+      "width": 1440,
+      "height": 708.5
+    },
+    {
+      "key": "recover",
+      "variant": "iPad",
+      "id": "8:2634",
+      "width": 768,
+      "height": 708.5
+    },
+    {
+      "key": "recover",
+      "variant": "Mobile",
+      "id": "8:2654",
+      "width": 375,
+      "height": 603
+    },
+    {
+      "key": "overview-ar",
+      "variant": "Desktop",
+      "id": "14:514",
+      "width": 1440,
+      "height": 1324
+    },
+    {
+      "key": "overview-ar",
+      "variant": "iPad",
+      "id": "14:598",
+      "width": 768,
+      "height": 1215
+    },
+    {
+      "key": "overview-ar",
+      "variant": "Mobile",
+      "id": "14:682",
+      "width": 375,
+      "height": 1496.5
+    }
+  ],
+  "photoCount": 71,
+  "localPhotoCount": 84,
+  "prototypeLinks": 338,
+  "pendingNewPages": [
+    "article",
+    "support",
+    "moderator",
+    "offline"
+  ],
+  "syncStatus": "Stopped by Figma Starter tool quota. 13 newer photo uploads and refreshes remain pending.",
+  "nativeCodeConnect": "Unavailable on Starter/View seat"
+}

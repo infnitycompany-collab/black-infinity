@@ -1,0 +1,11 @@
+{
+ "status":"Native Figma Code Connect blocked by the current Starter plan / View seat. No paid upgrade performed.",
+ "file":"https://www.figma.com/design/PndV8YDm0JEuLccfOe7kfb",
+ "mappings":[
+   {"nodeId":"2:46","component":"Button","source":"src/components/ui.tsx","props":{"variant":"primary"}},
+   {"nodeId":"2:48","component":"Button","source":"src/components/ui.tsx","props":{"variant":"outline-light"}},
+   {"nodeId":"4:2","component":"MediaCard","source":"src/components/Workspace.tsx"},
+   {"nodeId":"4:7","component":"Empty","source":"src/components/Workspace.tsx"},
+   {"nodeId":"2:56","component":"Stat","source":"src/components/Workspace.tsx"}
+ ]
+}

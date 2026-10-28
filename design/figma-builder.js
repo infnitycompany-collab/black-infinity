@@ -1,0 +1,40 @@
+// Executed through the official Figma connector. Editable nodes only; no page-sized raster layers.
+const definitions=__PAGES__;
+const all=__ALL_PAGES__;
+const createdNodeIds=[];const roots=[];
+const page=await figma.getNodeByIdAsync('5:2');await figma.setCurrentPageAsync(page);
+await figma.loadFontAsync({family:'Inter',style:'Regular'});
+const varIds={background:'VariableID:2:3',surface:'VariableID:2:4',raised:'VariableID:2:5',border:'VariableID:2:6',text:'VariableID:2:7',muted:'VariableID:2:8',accent:'VariableID:2:9',green:'VariableID:2:10'};
+const vars={};for(const[k,id]of Object.entries(varIds))vars[k]=await figma.variables.getVariableByIdAsync(id);
+const paint=k=>figma.variables.setBoundVariableForPaint({type:'SOLID',color:{r:0,g:0,b:0}},'color',vars[k]);
+const comps={};for(const[k,id]of Object.entries({primary:'2:46',secondary:'2:48',nav:'2:50',badge:'2:52',media:'4:2',empty:'4:7'}))comps[k]=await figma.getNodeByIdAsync(id);
+function track(node){createdNodeIds.push(node.id);return node;}
+function text(s,size=12,color='text',width){const t=track(figma.createText());t.name=s.slice(0,55);t.fontName={family:'Inter',style:'Regular'};t.fontSize=size;t.characters=s;t.fills=[paint(color)];t.lineHeight={unit:'PERCENT',value:155};if(width){t.textAutoResize='HEIGHT';t.resize(width,Math.max(16,size*1.5));}return t;}
+function box(name,width,direction='VERTICAL',fill='surface',padding=20,gap=14){const f=track(figma.createAutoLayout(direction));f.name=name;f.layoutMode=direction;f.resize(width,50);f.primaryAxisSizingMode=direction==='VERTICAL'?'AUTO':'FIXED';f.counterAxisSizingMode=direction==='VERTICAL'?'FIXED':'AUTO';f.paddingLeft=f.paddingRight=f.paddingTop=f.paddingBottom=padding;f.itemSpacing=gap;f.fills=fill?[paint(fill)]:[];f.cornerRadius=12;return f;}
+function instance(key,label,width){const n=track(comps[key].createInstance());if(label){const t=n.findAllWithCriteria({types:['TEXT']})[0];if(t){t.characters=label;createdNodeIds.push(t.id);}}if(width)n.resize(width,n.height);return n;}
+const navigation=[['overview','Overview'],['library','All media'],['vault','Private vault'],['favorites','Favorites'],['playlists','Playlists'],['shared','Shared with you'],['trash','Trash'],['rewards','Rewards & referrals'],['partners','Webmaster portal'],['connections','Connections'],['privacy','Privacy & security'],['settings','Settings'],['admin','Admin console']];
+for(const definition of definitions){const row=all.findIndex(x=>x.key===definition.key);for(const [variant,width,x]of [['Desktop',1440,100],['iPad',768,1640],['Mobile',375,2510]]){
+ const mobile=width<600,sidebar=definition.public||mobile?0:width===768?195:244;
+ const root=box(definition.key+' / '+variant,width,'HORIZONTAL','background',0,0);root.x=x;root.y=100+row*2400;root.cornerRadius=0;root.counterAxisSizingMode='AUTO';root.primaryAxisSizingMode='FIXED';root.clipsContent=false;
+ if(sidebar){const side=box('Workspace sidebar',sidebar,'VERTICAL','surface',20,10);side.resize(sidebar,1080);side.primaryAxisSizingMode='FIXED';side.appendChild(text('∞  blackinfinity',20,'text',sidebar-40));side.appendChild(text('YOUR PRIVATE MEDIA SPACE',7,'muted',sidebar-40));side.appendChild(instance('secondary','Your alias · Personal workspace',sidebar-40));side.appendChild(text('YOUR SPACE',8,'muted'));for(const[key,label]of navigation){const n=instance('nav',label,sidebar-40);n.name='Navigate · '+key;if(key===definition.key)n.fills=[paint('raised')];side.appendChild(n);}side.appendChild(text('Your storage',10,'muted'));side.appendChild(text('0 B of 2 GB used',10,'muted'));side.appendChild(text('A private space. By design.',8,'muted'));root.appendChild(side);}
+ const main=box('Page content',width-sidebar,'VERTICAL','background',0,0);root.appendChild(main);const innerWidth=width-sidebar;
+ const header=box('Header',innerWidth,'HORIZONTAL','background',mobile?18:30,18);header.appendChild(text(definition.public?'∞  blackinfinity':mobile?'☰  Your space':'Your space / '+definition.key,definition.public?18:11,'text'));header.appendChild(instance('badge','PRIVATE BETA'));main.appendChild(header);
+ const content=box('Main · '+definition.key,innerWidth,'VERTICAL','background',mobile?20:38,22);main.appendChild(content);const cw=innerWidth-(mobile?40:76);
+ content.appendChild(text(definition.public?'PRIVATE BY INTENTION':'A LITTLE SPACE. ALL YOURS.',8,'muted',cw));content.appendChild(text(definition.title,definition.public?(mobile?36:52):(mobile?24:28),'text',cw));content.appendChild(text(definition.subtitle,mobile?11:12,'muted',cw));
+ if(!definition.public)content.appendChild(instance('primary','Upload media'));
+ if(definition.kind==='home'){const art=box('Editable infinity artwork',cw,'HORIZONTAL','raised',28,0);art.primaryAxisAlignItems='CENTER';art.appendChild(text('∞',mobile?130:230,'accent'));content.appendChild(art);}
+ if(definition.kind==='overview'){
+  const hero=box('Welcome banner',cw,'HORIZONTAL','raised',mobile?23:34,20);hero.strokes=[paint('border')];const hw=mobile?cw-46:Math.floor(cw*.57);const copy=box('Welcome copy',hw,'VERTICAL',null,0,13);copy.appendChild(text('YOUR WORLD, A LITTLE MORE PRIVATE',7,'muted',hw));copy.appendChild(text('Keep what matters.\nLeave the noise behind.',mobile?28:31,'text',hw));copy.appendChild(text('One considered home for your media.\nYours to keep, play, and share.',10,'muted',hw));copy.appendChild(instance('secondary','Bring something in ↗'));hero.appendChild(copy);if(!mobile){const art=box('Infinity brand artwork',cw-hw-88,'VERTICAL',null,0,4);art.appendChild(text('∞',width===768?110:180,'accent'));art.appendChild(text('PRIVATE BY INTENTION',7,'muted'));hero.appendChild(art);}content.appendChild(hero);
+  const stats=box('Usage statistics',cw,mobile?'VERTICAL':'HORIZONTAL',null,0,16);for(const [label,value,detail]of [['Your library','0','media files, all together'],['Private vault','0','encrypted files, your keys'],['Room to grow','2.0 GB','available on your free plan']]){const w=mobile?cw:(cw-32)/3;const c=box(label,w,'VERTICAL','surface',18,8);c.strokes=[paint('border')];c.appendChild(text(label,11,'muted',w-36));c.appendChild(text(value,25,'text',w-36));c.appendChild(text(detail,9,'muted',w-36));stats.appendChild(c);}content.appendChild(stats);
+  content.appendChild(text('Recently added',16,'text',cw));const empty=instance('empty',undefined,cw);content.appendChild(empty);
+  const bottom=box('Privacy and rewards shortcuts',cw,mobile?'VERTICAL':'HORIZONTAL',null,0,16);for(const [heading,description]of [['Your privacy isn’t an extra.','Understand your keys, sessions, and sharing.'],['Good things come around.','Invite a friend. Earn a little more room.']]){const w=mobile?cw:(cw-16)/2;const c=box(heading,w,'VERTICAL','surface',20,8);c.strokes=[paint('border')];c.appendChild(text(heading,12,'text',w-40));c.appendChild(text(description,10,'muted',w-40));c.appendChild(text('Explore your controls ↗',9,'accent',w-40));bottom.appendChild(c);}content.appendChild(bottom);
+ }
+ for(const [index,section]of (definition.kind==='overview'?[]:definition.sections).entries()){
+  const [title,body]=section;const panel=box(title,cw,'VERTICAL',definition.kind==='trust'?'background':index===0&&['overview','rewards'].includes(definition.kind)?'raised':'surface',mobile?20:25,12);panel.strokes=[paint('border')];panel.appendChild(text(title,index===0&&['overview','rewards'].includes(definition.kind)?(mobile?26:32):18,'text',cw-(mobile?40:50)));
+  const pieces=body.split('|');if(pieces.length>1){for(const item of pieces){const field=box('Control · '+item,cw-(mobile?40:50),'HORIZONTAL','background',12,8);field.strokes=[paint('border')];field.cornerRadius=8;field.appendChild(text(item,11,'muted',cw-(mobile?64:74)));panel.appendChild(field);}}else panel.appendChild(text(body,11,'muted',cw-(mobile?40:50)));
+  content.appendChild(panel);
+ }
+ content.appendChild(text('Private by intention. Transparent by design.  /  Trust center',8,'muted',cw));
+ roots.push({key:definition.key,variant,id:root.id,width:root.width,height:root.height});
+}}
+return {createdNodeIds,roots,font:'Inter',pageId:page.id};

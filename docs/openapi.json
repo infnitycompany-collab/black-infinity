@@ -1,0 +1,3124 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Black Infinity API",
+    "version": "0.1.0",
+    "description": "Development beta. All state mutations enforce same-origin requests. Passkey options use a short-lived HttpOnly challenge cookie. Payments, advertising and cash commissions are disabled. Role and detailed validation rules are enforced by the route handlers and Zod schemas."
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health status",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/me": {
+      "get": {
+        "summary": "Account, usage and feature gates",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/auth/register/options": {
+      "post": {
+        "summary": "Begin single-use invitation and adult passkey registration",
+        "security": [],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "alias",
+                  "invite",
+                  "adult"
+                ],
+                "properties": {
+                  "alias": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 40
+                  },
+                  "invite": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 150
+                  },
+                  "adult": {
+                    "const": true
+                  },
+                  "referral": {
+                    "type": "string",
+                    "maxLength": 80
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register/verify": {
+      "post": {
+        "summary": "Complete verified passkey registration; returns one-time recovery codes",
+        "security": [],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/auth/login/options": {
+      "post": {
+        "summary": "Begin discoverable passkey login",
+        "security": [],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/auth/login/verify": {
+      "post": {
+        "summary": "Verify passkey and establish HttpOnly session",
+        "security": [],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/auth/recover": {
+      "post": {
+        "summary": "Consume account recovery code; does not unlock vault",
+        "security": [],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/auth/passkey/options": {
+      "post": {
+        "summary": "Begin additional passkey registration",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/auth/passkey/verify": {
+      "post": {
+        "summary": "Complete additional passkey registration",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Revoke current session",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/vault": {
+      "post": {
+        "summary": "Initialize encrypted key envelope once",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/media": {
+      "get": {
+        "summary": "List owned and authorized shared media",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      },
+      "post": {
+        "summary": "Reserve upload and storage allowance",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MediaUpload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/media/{id}": {
+      "patch": {
+        "summary": "Favorite, move, position, trash or restore owned media",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/media/{id}/chunks/{index}": {
+      "put": {
+        "summary": "Upload one bounded idempotent chunk",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary",
+                "maxLength": 4194320
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Read authorized ciphertext chunk",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/media/{id}/status": {
+      "get": {
+        "summary": "Read own upload state and completed chunk indexes",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/media/{id}/complete": {
+      "post": {
+        "summary": "Finalize complete upload atomically",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/media/{id}/process": {
+      "post": {
+        "summary": "Queue managed 480p/720p variant",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/media/{id}/stream": {
+      "get": {
+        "summary": "Authorized managed byte-range playback or restricted relay",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Range",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Single byte range only. Delivery capacity is reserved before upstream access."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/media/{id}/external": {
+      "post": {
+        "summary": "Create owned managed playback capability, expiring in ten minutes",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/external/{token}": {
+      "get": {
+        "summary": "Read an expiring, revocable managed playback capability",
+        "security": [],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/folders": {
+      "get": {
+        "summary": "List own folders",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create visible folder label",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/playlists": {
+      "get": {
+        "summary": "List own playlists",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create managed-media playlist",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/recipient": {
+      "get": {
+        "summary": "Resolve member code to recipient public key",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/shares": {
+      "get": {
+        "summary": "List outgoing shares",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create recipient share with optional client-wrapped key",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/shares/{id}": {
+      "delete": {
+        "summary": "Revoke owned share",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "summary": "Read own persistent inbox",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Mark own inbox read",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/notifications/events": {
+      "get": {
+        "summary": "Authenticated generic SSE update stream",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/push": {
+      "post": {
+        "summary": "Store supported browser push subscription",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/rewards": {
+      "get": {
+        "summary": "Read credit ledger and referral level",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/appeals": {
+      "post": {
+        "summary": "Submit capped user appeal",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/partners": {
+      "get": {
+        "summary": "Own application and campaign reporting",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      },
+      "post": {
+        "summary": "Apply to affiliate program",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/campaigns": {
+      "post": {
+        "summary": "Create campaign as approved partner",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/connections/telegram": {
+      "post": {
+        "summary": "Consent to managed imports and create one-time bot link",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Disconnect bot account",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/privacy": {
+      "get": {
+        "summary": "Own sessions, passkeys and push counts",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/privacy/revoke": {
+      "post": {
+        "summary": "Revoke own specified session",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/privacy/passkey/{id}": {
+      "delete": {
+        "summary": "Remove passkey while retaining another; revokes all sessions",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/privacy/recovery-codes": {
+      "post": {
+        "summary": "Replace account recovery codes after recent passkey verification",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/privacy/push": {
+      "delete": {
+        "summary": "Remove own push subscriptions",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/privacy/export": {
+      "get": {
+        "summary": "Download own authorized account records",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/privacy/delete": {
+      "post": {
+        "summary": "Revoke access immediately and queue deletion",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/posts": {
+      "get": {
+        "summary": "Published journal entries",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/posts/{slug}": {
+      "get": {
+        "summary": "Published article for locale",
+        "security": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "en",
+                "ar"
+              ],
+              "default": "en"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/admin": {
+      "get": {
+        "summary": "Role-scoped operational console with recent verification",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/admin/role": {
+      "patch": {
+        "summary": "Owner assigns member, support or moderator role and revokes sessions",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/admin/invites": {
+      "post": {
+        "summary": "Owner creates single-use beta invitation",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/admin/user": {
+      "patch": {
+        "summary": "Owner suspends or restores a member",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/admin/partner": {
+      "patch": {
+        "summary": "Owner reviews partner application",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/admin/post": {
+      "post": {
+        "summary": "Owner saves plain-text article and sanitized JPEG cover",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/admin/job": {
+      "patch": {
+        "summary": "Owner retries a failed job",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/admin/appeal": {
+      "patch": {
+        "summary": "Role-authorized appeal decision",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/admin/rewards/reverse": {
+      "post": {
+        "summary": "Owner appends auditable qualification reversals",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/admin/worker-tick": {
+      "post": {
+        "summary": "Owner advances one local embedded worker job; disabled with production PostgreSQL",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/admin/managed/{id}": {
+      "get": {
+        "summary": "Owner/moderator authorized managed-media review",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    },
+    "/admin/moderate": {
+      "post": {
+        "summary": "Owner/moderator removes managed content; only owner may restore",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal the configured APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation; JSON unless documented as binary/SSE/export."
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Session required or expired"
+          },
+          "403": {
+            "description": "Origin, role, recent verification, or permission rejected"
+          },
+          "404": {
+            "description": "Resource unavailable"
+          },
+          "409": {
+            "description": "Conflict, quota or gate"
+          },
+          "413": {
+            "description": "Bounded request exceeded"
+          },
+          "429": {
+            "description": "Rate or delivery allowance exceeded"
+          },
+          "503": {
+            "description": "Integration unavailable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "session": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "bi_session",
+        "description": "Opaque HttpOnly SameSite=Strict session; Secure under HTTPS. Do not expose to JavaScript."
+      }
+    },
+    "schemas": {
+      "MediaUpload": {
+        "type": "object",
+        "required": [
+          "id",
+          "mode",
+          "name",
+          "mime",
+          "size"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mode": {
+            "enum": [
+              "managed",
+              "vault"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "mime": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000000
+          },
+          "metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Vault BI-V1 envelope: prefix, wrappedKey, cipher, size, chunkSize, version. Filenames belong inside authenticated ciphertext."
+          },
+          "folderId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          }
+        }
+      }
+    }
+  }
+}

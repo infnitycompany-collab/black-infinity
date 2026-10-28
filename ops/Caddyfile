@@ -1,0 +1,11 @@
+{$APP_HOST} {
+  # No access logger. Configure infrastructure retention separately before public use.
+  request_body { max_size 5MB }
+  reverse_proxy web:3000 {
+    transport http {
+      read_timeout 130s
+      write_timeout 130s
+    }
+  }
+  header -Server
+}

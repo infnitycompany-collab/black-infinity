@@ -1,0 +1,2 @@
+import fs from 'node:fs/promises';import path from 'node:path';import sharp from 'sharp';
+const files=(await fs.readdir('docs/screenshots')).filter(n=>n.endsWith('.png')).sort();const rows=[];let y=100;for(const file of files){const m=await sharp(path.join('docs/screenshots',file)).metadata();rows.push({name:file,path:path.resolve('docs/screenshots',file),width:m.width,height:m.height,x:100,y});y+=m.height*.5+70;}await fs.writeFile('.data/screenshots.json',JSON.stringify(rows));console.log(JSON.stringify(rows));
