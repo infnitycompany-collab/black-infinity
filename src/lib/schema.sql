@@ -58,3 +58,4 @@ CREATE UNIQUE INDEX IF NOT EXISTS one_active_room_call ON communication_calls(ro
 CREATE TABLE IF NOT EXISTS call_participants(call_id text NOT NULL REFERENCES communication_calls(id) ON DELETE CASCADE,user_id text NOT NULL REFERENCES users(id),joined_at timestamptz NOT NULL DEFAULT now(),last_seen timestamptz NOT NULL DEFAULT now(),left_at timestamptz,PRIMARY KEY(call_id,user_id));
 CREATE TABLE IF NOT EXISTS call_signals(seq bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,call_id text NOT NULL REFERENCES communication_calls(id) ON DELETE CASCADE,sender_id text NOT NULL REFERENCES users(id),recipient_id text NOT NULL REFERENCES users(id),client_id text NOT NULL,payload jsonb NOT NULL,created_at timestamptz NOT NULL DEFAULT now(),UNIQUE(sender_id,client_id));
 CREATE INDEX IF NOT EXISTS call_signal_delivery ON call_signals(call_id,recipient_id,seq);
+ALTER TABLE call_participants ADD COLUMN IF NOT EXISTS participation_id text NOT NULL DEFAULT gen_random_uuid()::text;

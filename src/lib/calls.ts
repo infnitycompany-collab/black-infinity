@@ -116,19 +116,22 @@ export async function callRoute(
       );
       if (Number(active?.n) >= 4)
         fail(409, "This beta call is limited to four participants");
+      const participationId=id();
       await tx.query(
-        "INSERT INTO call_participants(call_id,user_id) VALUES($1,$2) ON CONFLICT(call_id,user_id) DO UPDATE SET left_at=NULL,last_seen=now(),joined_at=now()",
-        [call.id, u.id],
+        "INSERT INTO call_participants(call_id,user_id,participation_id) VALUES($1,$2,$3) ON CONFLICT(call_id,user_id) DO UPDATE SET left_at=NULL,last_seen=now(),joined_at=now(),participation_id=$3",
+        [call.id, u.id, participationId],
       );
-      return json({ id: call.id, publisher });
+      return json({ id: call.id, publisher, participationId });
     }
     if (!call) return json({ call: null, participants: [], signals: [] });
     const consent = await one(
-      "SELECT 1 FROM call_participants WHERE call_id=$1 AND user_id=$2 AND left_at IS NULL AND last_seen>now()-interval '45 seconds'",
+      "SELECT participation_id FROM call_participants WHERE call_id=$1 AND user_id=$2 AND left_at IS NULL AND last_seen>now()-interval '45 seconds'",
       [call.id, u.id],
       tx,
     );
     if (parts[2] === "leave" && method === "POST") {
+      const d=z.object({callId:z.string().uuid(),participationId:z.string().uuid()}).parse(await body(req));
+      if(call.id!==d.callId||consent?.participation_id!==d.participationId)return json({ok:true});
       await tx.query(
         "UPDATE call_participants SET left_at=now() WHERE call_id=$1 AND user_id=$2",
         [call.id, u.id],
@@ -148,6 +151,7 @@ export async function callRoute(
       if (!consent) fail(403, "Join the call before signaling");
       const d = z
         .object({
+          participationId:z.string().uuid(),
           target: z.string().uuid(),
           clientId: z.string().uuid(),
           payload: z.discriminatedUnion("type", [
@@ -174,6 +178,7 @@ export async function callRoute(
           ]),
         })
         .parse(await body(req));
+      if(consent!.participation_id!==d.participationId)fail(409,'Call participation replaced');
       if (
         d.target === u.id ||
         !(await one(
@@ -207,7 +212,8 @@ export async function callRoute(
       return json({ ok: true });
     }
     if (parts.length === 2 && method === "GET") {
-      if (consent)
+      const joined=!!consent&&consent.participation_id===req.nextUrl.searchParams.get('participation');
+      if (joined)
         await tx.query(
           "UPDATE call_participants SET last_seen=now() WHERE call_id=$1 AND user_id=$2",
           [call.id, u.id],
@@ -220,7 +226,7 @@ export async function callRoute(
       ).rows;
       const after = req.nextUrl.searchParams.get("after") || "0";
       if (!/^\d{1,18}$/.test(after)) fail(400, "Invalid signal cursor");
-      const signals = consent
+      const signals = joined
         ? (
             await tx.query(
               "SELECT seq::text,sender_id,payload FROM call_signals WHERE call_id=$1 AND recipient_id=$2 AND seq>$3::bigint ORDER BY seq LIMIT 100",
@@ -229,6 +235,7 @@ export async function callRoute(
           ).rows
         : [];
       return json({
+        joined,
         call: {
           id: call.id,
           started_by: call.started_by,

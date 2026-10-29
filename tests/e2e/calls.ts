@@ -101,6 +101,12 @@ export async function verifyCalls(
   otherId: string,
 ) {
   const headers = { origin: "http://localhost:3100" };
+  const direct=(await owner.request.get('/api/v1/conversations').then(r=>r.json())).rooms.find((r:any)=>r.title==='Creative catch-up').id;
+  const prior=await owner.request.post(`/api/v1/conversations/${direct}/call`,{headers,data:{allowDirect:true}}).then(r=>r.json());
+  const replacement=await owner.request.post(`/api/v1/conversations/${direct}/call`,{headers,data:{allowDirect:true}}).then(r=>r.json());
+  await owner.request.post(`/api/v1/conversations/${direct}/call/leave`,{headers,data:{callId:prior.id,participationId:prior.participationId}});
+  expect((await owner.request.get(`/api/v1/conversations/${direct}/call?participation=${replacement.participationId}`).then(r=>r.json())).joined).toBe(true);
+  await owner.request.post(`/api/v1/conversations/${direct}/call/leave`,{headers,data:{callId:replacement.id,participationId:replacement.participationId}});
   await enter(owner, "chats", "Creative catch-up", true);
   await enter(other, "chats", "Creative catch-up", true);
   for (const page of [owner, other])
@@ -200,7 +206,7 @@ export async function verifyCalls(
   for (const page of [owner, other, third.page, fourth.page])
     await expect(
       page.locator(".call-tile figcaption").filter({ hasText: "connected" }),
-    ).toHaveCount(3, { timeout: 30000 });
+    ).toHaveCount(3, { timeout: 30000 }).catch(async error=>{console.error('Group-call diagnostic',await page.locator('.call-panel').allTextContents(),await page.locator('.error-banner').allTextContents());throw error;});
   await capture(owner, "group-call");
   await third.page
     .getByRole("button", { name: "Leave call", exact: true })

@@ -148,6 +148,7 @@ export default function CallPanel({
     peopleRef = useRef<Person[]>([]),
     after = useRef("0"),
     callId = useRef(""),
+    participationId = useRef(''),
     generation = useRef(0),
     conf = useRef<any>(null),
     isStarting = useRef(false);
@@ -160,6 +161,7 @@ export default function CallPanel({
     generation.current++;
     joinedRef.current = false;
     callId.current = "";
+    participationId.current='';
     after.current = "0";
     for (const p of peers.current.values()) p.pc.close();
     peers.current.clear();
@@ -179,14 +181,17 @@ export default function CallPanel({
   }, []);
   useEffect(() => {
     if (!publisher && joinedRef.current) {
+      const ended={callId:callId.current,participationId:participationId.current};
       cleanup();
-      void api(`${path}/leave`, "POST", {}).catch(() => {});
+      void api(`${path}/leave`, "POST", ended).catch(() => {});
     }
   }, [publisher, cleanup, path]);
   const leave = async () => {
+    const ended={callId:callId.current,participationId:participationId.current};
     cleanup();
+    if(!ended.callId||!ended.participationId)return;
     try {
-      await api(`${path}/leave`, "POST", {});
+      await api(`${path}/leave`, "POST", ended);
     } catch {
       setError(
         tr("Call ended locally. Server presence expires automatically."),
@@ -195,6 +200,7 @@ export default function CallPanel({
   };
   useEffect(
     () => () => {
+      const ended=joinedRef.current?{callId:callId.current,participationId:participationId.current}:null;
       generation.current++;
       joinedRef.current = false;
       for (const p of peers.current.values()) p.pc.close();
@@ -202,7 +208,7 @@ export default function CallPanel({
       for (const track of localRef.current?.getTracks() || []) track.stop();
       cameraRef.current?.stop();
       screenRef.current?.stop();
-      void api(`${path}/leave`, "POST", {}).catch(() => {});
+      if(ended)void api(`${path}/leave`, "POST", ended).catch(() => {});
     },
     [path],
   );
@@ -212,6 +218,7 @@ export default function CallPanel({
       target,
       payload,
       clientId: crypto.randomUUID(),
+      participationId:participationId.current,
     });
   };
   const ensurePeer = async (person: Person) => {
@@ -244,7 +251,7 @@ export default function CallPanel({
       }
     }
     pc.onicecandidate = (e) => {
-      if (e.candidate)
+      if (e.candidate&&peers.current.get(person.user_id)?.pc===pc)
         void signal(person.user_id, {
           type: "candidate",
           candidate: e.candidate.toJSON(),
@@ -272,7 +279,7 @@ export default function CallPanel({
   const pollRef = useRef<() => Promise<void>>(async () => {});
   pollRef.current = async () => {
     const epoch = generation.current,
-      state = await api(`${path}?after=${after.current}`);
+      state = await api(`${path}?after=${after.current}&participation=${participationId.current}`);
     if (epoch !== generation.current) return;
     setActive(!!state.call);
     peopleRef.current = state.participants;
@@ -280,6 +287,7 @@ export default function CallPanel({
     if (!joinedRef.current) return;
     if (
       !state.call ||
+      !state.joined ||
       state.call.id !== callId.current ||
       !state.participants.some((p: Person) => p.user_id === userId)
     ) {
@@ -303,6 +311,7 @@ export default function CallPanel({
       }
     }
     for (const person of state.participants as Person[]) {
+      if(epoch!==generation.current)return;
       if (person.user_id === userId || (!publisher && !person.publisher))
         continue;
       const old = peers.current.has(person.user_id),
@@ -316,6 +325,7 @@ export default function CallPanel({
       }
     }
     for (const s of state.signals) {
+      if(epoch!==generation.current)return;
       const person = state.participants.find(
         (p: Person) => p.user_id === s.sender_id,
       );
@@ -429,6 +439,7 @@ export default function CallPanel({
       const call = await api(path, "POST", { allowDirect });
       generation.current++;
       callId.current = call.id;
+      participationId.current=call.participationId;
       after.current = "0";
       joinedRef.current = true;
       setJoined(true);

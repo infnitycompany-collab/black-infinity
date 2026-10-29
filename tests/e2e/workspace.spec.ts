@@ -304,6 +304,7 @@ test("real passkeys, managed and encrypted playback, sharing, responsive pages a
   await page.locator("#language").selectOption("en");
   await page.setViewportSize({ width: 1440, height: 1080 });
   await page.goto("/app");
+  await page.locator('.workspace-main').evaluate(el=>Promise.all(el.getAnimations({subtree:true}).filter(a=>a.effect?.getComputedTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>undefined))));
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
