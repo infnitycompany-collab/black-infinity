@@ -13,6 +13,33 @@ async function deleteAccount(userId: string) {
   ).rows;
   for (const m of objects) await removeMedia(m.id, m.chunk_count);
   await db.transaction(async (tx) => {
+    await tx.query("DELETE FROM call_signals WHERE sender_id=$1 OR recipient_id=$1", [userId]);
+    await tx.query("DELETE FROM call_participants WHERE user_id=$1", [userId]);
+    await tx.query("UPDATE communication_calls SET ended_at=now() WHERE started_by=$1 AND ended_at IS NULL", [userId]);
+    // Delete owned communities and direct chats; remove authored content in other communities.
+    await tx.query(
+      "DELETE FROM conversations WHERE id IN(SELECT room_id FROM conversation_members WHERE user_id=$1 AND role='owner') OR direct_pair LIKE $2",
+      [userId, `%${userId}%`],
+    );
+    await tx.query(
+      "DELETE FROM conversation_reactions WHERE user_id=$1 OR message_id IN(SELECT id FROM conversation_messages WHERE sender_id=$1)",
+      [userId],
+    );
+    await tx.query(
+      "UPDATE conversation_messages SET body='',deleted_at=now(),pinned=false WHERE sender_id=$1",
+      [userId],
+    );
+    await tx.query(
+      "DELETE FROM conversation_invites WHERE created_by=$1 OR consumed_by=$1",
+      [userId],
+    );
+    await tx.query("DELETE FROM conversation_members WHERE user_id=$1", [
+      userId,
+    ]);
+    await tx.query(
+      "DELETE FROM conversation_blocks WHERE user_id=$1 OR blocked_id=$1",
+      [userId],
+    );
     await tx.query("DELETE FROM shares WHERE owner_id=$1 OR recipient_id=$1", [
       userId,
     ]);
@@ -148,6 +175,8 @@ export async function tick() {
     }
   }
   await qualifyRewards();
+  await db.query("DELETE FROM call_signals WHERE created_at<now()-interval '90 seconds'");
+  await db.query("DELETE FROM communication_calls WHERE ended_at<now()-interval '30 days'");
   await db.query("DELETE FROM audit WHERE created_at<now()-interval '30 days'");
   await db.query(
     "DELETE FROM telegram_updates WHERE created_at<now()-interval '30 days'",

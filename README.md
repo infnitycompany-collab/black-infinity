@@ -20,6 +20,8 @@ Copy `.env.example` to `.env.local` when configuring integrations. Next.js and t
 
 ## Implemented flows
 
+- Black Infinity chats, private groups and broadcast channels with replies, edits, delete, pin, reactions, role checks, invitations, unread counts, blocking, archiving and reporting. Chat content is service-managed, distinct from the vault. The expanded communication feature inventory and remaining Telegram-style scope are documented in `docs/COMMUNICATIONS.md`.
+- WebRTC private video/voice calls, four-person group mesh, selected-screen video sharing and private channel host/viewer controls. Production requires your configured TURN relay; explicit direct-connection consent is available only in development. See `docs/CALLS.md` for tested behavior and limits.
 - Invite-only, pseudonymous passkey registration/login, multiple passkeys, one-time recovery codes, recent verification for administration, session revocation.
 - Chunked/resumable managed and encrypted uploads, byte-range playback, favorites, folders, playlists, trash/restore, recipient sharing/revocation and temporary managed-player links.
 - Device-held vault keys, encrypted metadata, bounded-memory service-worker decryption, separate vault recovery kit and recipient key wrapping.
@@ -37,7 +39,7 @@ Copy `.env.example` to `.env.local` when configuring integrations. Next.js and t
 - [Architecture and handoff document](https://docs.google.com/document/d/1u0zvxiaDqtjIK4Lr9FVL0fLzR8d6ZlXv7xO3xPQ393I/edit)
 - [Release tracker](https://docs.google.com/spreadsheets/d/1gk5a2srPnCY1grUdsGyyrpK6GMCYFnzs5PO2d1zYeRY/edit)
 
-Figma has 72 editable responsive frames (including three Arabic variants) and 71 clearly labeled raster browser proofs. There are 84 current browser captures locally. The Starter-plan tool quota stopped the final 13 photo uploads and four newer page specifications. Repository design definitions preserve that pending work. Native Code Connect is also unavailable on the current Starter/View seat; source mappings are recorded in `design/code-map.json`.
+Figma has 72 editable responsive frames (including three Arabic variants) and 71 clearly labeled raster browser proofs. There are 114 current browser captures locally, including communication threads, four-person calls and channel broadcast views. The Starter-plan tool quota blocks 43 additional photo placements, refreshing older proofs, nine newer page specifications and brand-v2 synchronization. Repository design sources preserve that pending work. Native Code Connect is also unavailable on the current Starter/View seat; source mappings are recorded in `design/code-map.json`.
 
 The editable frames represent design specifications; screenshot proofs capture the actual running application. Do not describe every editable frame as a pixel-perfect reproduction without individual comparison.
 

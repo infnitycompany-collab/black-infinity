@@ -2,6 +2,7 @@
 import { useTranslation, LanguageSwitch } from "@/lib/locale";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
@@ -38,12 +39,18 @@ import {
   CheckCircle2,
   AlertTriangle,
   ExternalLink,
+  MessageCircle,
+  Users,
+  Megaphone,
 } from "lucide-react";
 import { startRegistration } from "@simplewebauthn/browser";
 import { Brand } from "./PublicSite";
 import { Button } from "./ui";
 import DelegatedAdmin from "./DelegatedAdmin";
 import { api, bytes, download, coverImage } from "@/lib/client";
+const Conversations = dynamic(() => import("./Conversations"), {
+  loading: () => <p role="status">Loading conversations…</p>,
+});
 import {
   createVault,
   unlockVault,
@@ -62,6 +69,9 @@ const nav = [
   ["favorites", "Favorites", Star],
   ["playlists", "Playlists", ListVideo],
   ["shared", "Shared with you", Share2],
+  ["chats", "Chats", MessageCircle],
+  ["groups", "Groups", Users],
+  ["channels", "Channels", Megaphone],
   ["trash", "Trash", Trash2],
 ] as const;
 const extra = [
@@ -87,6 +97,15 @@ type Media = {
   share_wrapped?: { key: string };
 };
 const titles: Record<string, [string, string]> = {
+  chats: [
+    "Conversations that feel closer.",
+    "Private invitations. Thoughtful connections.",
+  ],
+  groups: ["Bring your people together.", "A shared space for your community."],
+  channels: [
+    "Your voice. Your audience.",
+    "Publish updates with clear member controls.",
+  ],
   overview: [
     "Your space, at a glance.",
     "A little less noise. A little more room for what matters.",
@@ -340,7 +359,7 @@ export default function Workspace({ section }: { section: string }) {
     }
     cancel.current = false;
     setModal(null);
-    const result=await run(async () => {
+    const result = await run(async () => {
       setUpload({
         name: file.name,
         percent: 0,
@@ -433,7 +452,15 @@ export default function Workspace({ section }: { section: string }) {
       });
       await reload();
     });
-    if(result===null)setUpload(previous=>previous?{...previous,status:'Upload interrupted. Reselect the same file to resume.'}:null);
+    if (result === null)
+      setUpload((previous) =>
+        previous
+          ? {
+              ...previous,
+              status: "Upload interrupted. Reselect the same file to resume.",
+            }
+          : null,
+      );
   }
   async function play(m: Media) {
     await run(async () => {
@@ -667,7 +694,7 @@ export default function Workspace({ section }: { section: string }) {
             </button>
           </div>
         </header>
-        <main id="workspace-main" className="workspace-main">
+        <main id="workspace-main" className="workspace-main" key={section}>
           <div className="page-heading">
             <div>
               <div className="eyebrow">
@@ -680,7 +707,7 @@ export default function Workspace({ section }: { section: string }) {
               <h1>
                 {locale === "ar" && section === "overview"
                   ? `مرحباً، ${me.user.alias}.`
-                  : title[0]}
+                  : tr(title[0])}
               </h1>
               <p>{tr(title[1])}</p>
             </div>
@@ -936,6 +963,8 @@ export default function Workspace({ section }: { section: string }) {
                 }
               />
             </>
+          ) : ["chats", "groups", "channels"].includes(section) ? (
+            <Conversations section={section} userId={me.user.id} />
           ) : section === "rewards" ? (
             <Rewards me={me} run={run} />
           ) : section === "partners" ? (
@@ -1390,7 +1419,15 @@ export default function Workspace({ section }: { section: string }) {
                           throw new Error(
                             "Recipient must set up a vault first",
                           );
-                        const actual=await keyFingerprint(recipient.vault_public_key);if(String(f.get('fingerprint')||'').trim()!==actual)throw new Error('Recipient key fingerprint does not match. Verify it through a trusted channel.');
+                        const actual = await keyFingerprint(
+                          recipient.vault_public_key,
+                        );
+                        if (
+                          String(f.get("fingerprint") || "").trim() !== actual
+                        )
+                          throw new Error(
+                            "Recipient key fingerprint does not match. Verify it through a trusted channel.",
+                          );
                         const file = await openFile(
                           selected.id,
                           selected.metadata,
@@ -1422,7 +1459,28 @@ export default function Workspace({ section }: { section: string }) {
                     required
                   />
                   <label htmlFor="expiry">{tr("Expires after")}</label>
-                  {selected.mode==='vault'?<><label htmlFor="recipient-fingerprint">Verified recipient key fingerprint</label><input id="recipient-fingerprint" name="fingerprint" className="form-control" required minLength={43} maxLength={43} pattern="[A-Za-z0-9_-]{43}" autoComplete="off"/><p className="small mt-2">Get this from the recipient’s Privacy & security page through a trusted channel. A member code alone does not verify their key.</p></>:null}
+                  {selected.mode === "vault" ? (
+                    <>
+                      <label htmlFor="recipient-fingerprint">
+                        Verified recipient key fingerprint
+                      </label>
+                      <input
+                        id="recipient-fingerprint"
+                        name="fingerprint"
+                        className="form-control"
+                        required
+                        minLength={43}
+                        maxLength={43}
+                        pattern="[A-Za-z0-9_-]{43}"
+                        autoComplete="off"
+                      />
+                      <p className="small mt-2">
+                        Get this from the recipient’s Privacy & security page
+                        through a trusted channel. A member code alone does not
+                        verify their key.
+                      </p>
+                    </>
+                  ) : null}
                   <select id="expiry" name="days" className="form-select">
                     <option value="1">{tr("1 day")}</option>
                     <option value="7">{tr("7 days")}</option>
@@ -2090,7 +2148,13 @@ function Privacy({
 
   const [data, setData] = useState<any>(null),
     [shares, setShares] = useState<any[]>([]);
-  const [keyId,setKeyId]=useState('');useEffect(()=>{if(me.user.vaultPublicKey)keyFingerprint(me.user.vaultPublicKey).then(setKeyId).catch(()=>{});},[me.user.vaultPublicKey]);
+  const [keyId, setKeyId] = useState("");
+  useEffect(() => {
+    if (me.user.vaultPublicKey)
+      keyFingerprint(me.user.vaultPublicKey)
+        .then(setKeyId)
+        .catch(() => {});
+  }, [me.user.vaultPublicKey]);
   const load = async () => {
     const [p, s] = await Promise.all([api("privacy"), api("shares")]);
     setData(p);
@@ -2126,7 +2190,20 @@ function Privacy({
               <h2>
                 <LockKeyhole size={18} /> {tr("Your encrypted vault")}
               </h2>
-            {keyId?<div className="key-fingerprint"><label>Your public key fingerprint</label><code>{keyId}</code><button className="subtle-button d-block" onClick={()=>run(async()=>navigator.clipboard.writeText(keyId))}>Copy fingerprint</button></div>:null}
+              {keyId ? (
+                <div className="key-fingerprint">
+                  <label>Your public key fingerprint</label>
+                  <code>{keyId}</code>
+                  <button
+                    className="subtle-button d-block"
+                    onClick={() =>
+                      run(async () => navigator.clipboard.writeText(keyId))
+                    }
+                  >
+                    Copy fingerprint
+                  </button>
+                </div>
+              ) : null}
               <span className="badge text-bg-secondary">
                 {me.user.vaultPublicKey ? "Configured" : "Not set up"}
               </span>

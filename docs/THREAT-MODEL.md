@@ -28,4 +28,6 @@ Scope: this repository and the invited 25-person beta. Approved assumptions are 
 
 ## Evidence and limits
 
+The communication expansion adds service-readable text, room membership, invitations, role changes and message-retry identifiers (`conversations.ts`). Every room operation locks and rechecks membership; channel writes require an owner/admin, editing requires authorship, direct-message delivery respects bilateral blocking, and chat exports contain only the requester's authored messages. React escapes text; private responses are never publicly cached. Remaining risks include service/operator access to message bodies, shared-group exposure, invitation disclosure, abuse, metadata and transport load. An independent E2EE chat protocol has not been implemented. See `COMMUNICATIONS.md` for explicit boundaries.
+
 Automated tests exercise selected key, access, streaming, quota and referral controls. They are not a penetration test or a proof of complete security. Production storage encryption, external connection permissions, physical devices, TLS deployment, decoder isolation, backup restoration and legal retention remain unverified until their release checks are performed.

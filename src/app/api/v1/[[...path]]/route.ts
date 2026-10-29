@@ -18,6 +18,7 @@ import {
 import { mediaRoute, managedStream } from "@/lib/media";
 import { rewardSummary } from "@/lib/rewards";
 import { PLANS, GB } from "@/lib/policy";
+import { conversationRoute } from "@/lib/conversations";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const json = (x: unknown, status = 200) => NextResponse.json(x, { status });
@@ -69,6 +70,7 @@ async function handler(
     const u = await user(req);
     const db = await database();
     await limit(`account:${u.id}`, 900, 60);
+    if (parts[0] === "conversations") return await conversationRoute(req, parts.slice(1), u);
     if (path === "notifications/events" && method === "GET") {
       let timer: ReturnType<typeof setInterval> | undefined,
         closed = false,
@@ -535,6 +537,9 @@ async function handler(
         account: { id: u.id, alias: u.alias, createdAt: u.created_at },
         note: "Vault contents and encrypted metadata require your recovery kit. This export is delivered only to your signed-in browser.",
       };
+      result.conversation_messages = (await db.query("SELECT id,room_id,body,created_at,edited_at,deleted_at FROM conversation_messages WHERE sender_id=$1", [u.id])).rows;
+      result.conversation_memberships = (await db.query("SELECT room_id,role,muted,archived FROM conversation_members WHERE user_id=$1", [u.id])).rows;
+      result.call_participation = (await db.query("SELECT call_id,joined_at,left_at FROM call_participants WHERE user_id=$1", [u.id])).rows;
       for (const table of tables) {
         const col = table === "shares" ? "owner_id" : "user_id";
         result[table] = (

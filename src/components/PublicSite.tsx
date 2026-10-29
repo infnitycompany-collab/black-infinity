@@ -11,7 +11,6 @@ import {
   Globe2,
   Check,
   HardDrive,
-  Infinity as InfinityIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 const Scene = dynamic(() => import("./InfinityScene"), { ssr: false });
@@ -21,7 +20,8 @@ export function Brand() {
   return (
     <Link href="/" className="brand">
       <span className="brand-icon">
-        <InfinityIcon size={26} />
+        {/* A local vector keeps the identity crisp without loading the brand artwork. */}
+        <img src="/brand/mark-v2.svg" width="36" height="36" alt="" />
       </span>
       <span>
         {tr("black")}
@@ -334,6 +334,10 @@ function Trust({ page }: { page: string }) {
         </div>
       </div>
       {[
+        [
+          "Conversation privacy",
+          "Chat messages, groups and channels are service-managed. Black Infinity can access their content and membership. Vault encryption does not apply to chat. Joining a group reveals its existing history to you. Removing access cannot erase copies already read or downloaded.",
+        ],
         [
           "Two modes. One informed choice.",
           "The E2EE vault encrypts your files and metadata on your device. Managed streaming allows server processing and external players. Administrators cannot recover vault keys. A downloaded copy cannot be revoked.",

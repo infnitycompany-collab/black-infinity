@@ -1,6 +1,6 @@
 /* No private cache. Vault keys exist only in volatile worker memory. */
 const vaults=new Map();
-const PUBLIC_CACHE='bi-public-v1';
+const PUBLIC_CACHE='bi-public-v2';
 self.addEventListener('install',event=>event.waitUntil(caches.open(PUBLIC_CACHE).then(cache=>cache.addAll(['/offline.html','/icon.svg']))));
 self.addEventListener('activate',event=>event.waitUntil(Promise.all([self.clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('bi-public-')&&k!==PUBLIC_CACHE).map(k=>caches.delete(k))))])));
 self.addEventListener('message',event=>{

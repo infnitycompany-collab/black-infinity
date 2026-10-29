@@ -510,14 +510,15 @@
     }
   ],
   "photoCount": 71,
-  "localPhotoCount": 84,
+  "localPhotoCount": 114,
   "prototypeLinks": 338,
   "pendingNewPages": [
     "article",
     "support",
     "moderator",
     "offline"
+    ,"chats","groups","channels","private-call","channel-broadcast"
   ],
-  "syncStatus": "Stopped by Figma Starter tool quota. 13 newer photo uploads and refreshes remain pending.",
+  "syncStatus": "Figma Starter MCP quota remains exhausted on 29 October 2026. 43 additional browser-photo placements, refreshing earlier proofs, nine page specifications and brand-v2 synchronization are pending.",
   "nativeCodeConnect": "Unavailable on Starter/View seat"
 }

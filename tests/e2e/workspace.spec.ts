@@ -228,6 +228,9 @@ test("real passkeys, managed and encrypted playback, sharing, responsive pages a
   ).toBe(404);
   await mkdir("docs/screenshots", { recursive: true });
   const pages = [
+    "chats",
+    "groups",
+    "channels",
     "overview",
     "library",
     "vault",

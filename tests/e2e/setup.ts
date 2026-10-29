@@ -11,7 +11,7 @@ export default async function setup() {
   await db.waitReady;
   await db.exec(await readFile("src/lib/schema.sql", "utf8"));
   const invites = [];
-  for (const role of ["owner", "user", "user"]) {
+  for (const role of ["owner", "user", "user", "owner", "user"]) {
     const code = randomBytes(32).toString("base64url");
     await db.query(
       "INSERT INTO invites(hash,role,expires_at) VALUES($1,$2,now()+interval '1 day')",
