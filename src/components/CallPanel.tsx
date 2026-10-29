@@ -26,6 +26,7 @@ type Peer = {
   audio?: RTCRtpTransceiver;
   video?: RTCRtpTransceiver;
   candidates: RTCIceCandidateInit[];
+  remoteSDP?: string;
 };
 function MediaTile({
   stream,
@@ -152,6 +153,7 @@ export default function CallPanel({
     generation = useRef(0),
     conf = useRef<any>(null),
     isStarting = useRef(false);
+  const polling=useRef(false);
   const path = `conversations/${roomId}/call`;
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -337,15 +339,23 @@ export default function CallPanel({
         payload = s.payload;
       if (payload.type === "candidate") {
         if (peer.pc.remoteDescription)
-          await peer.pc.addIceCandidate(payload.candidate);
+          await peer.pc.addIceCandidate(payload.candidate).catch(()=>{});
         else peer.candidates.push(payload.candidate);
       } else {
+        // Signaling is delivered at least once. Replayed or superseded answers
+        // must never be applied to an already-stable peer connection.
+        if(payload.type==='answer'&&(peer.remoteSDP===payload.sdp||peer.pc.signalingState!=='have-local-offer')){after.current=s.seq;continue;}
+        if(payload.type==='offer'&&peer.remoteSDP===payload.sdp&&peer.pc.signalingState==='stable'){
+          if(peer.pc.localDescription?.type==='answer')await signal(s.sender_id,{type:'answer',sdp:peer.pc.localDescription.sdp});
+          after.current=s.seq;continue;
+        }
         await peer.pc.setRemoteDescription({
           type: payload.type,
           sdp: payload.sdp,
         });
+        peer.remoteSDP=payload.sdp;
         for (const candidate of peer.candidates)
-          await peer.pc.addIceCandidate(candidate);
+          await peer.pc.addIceCandidate(candidate).catch(()=>{});
         peer.candidates = [];
         if (payload.type === "offer") {
           peer.audio = peer.pc
@@ -380,8 +390,9 @@ export default function CallPanel({
       live = true,
       failures = 0;
     const poll = async () => {
-      if (running) return;
+      if (running||polling.current) return;
       running = true;
+      polling.current=true;
       try {
         await pollRef.current();
         failures = 0;
@@ -392,6 +403,7 @@ export default function CallPanel({
         if (failures >= 3 && joinedRef.current) cleanup();
       } finally {
         running = false;
+        polling.current=false;
       }
     };
     void poll();

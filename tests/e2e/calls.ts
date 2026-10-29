@@ -101,6 +101,8 @@ export async function verifyCalls(
   otherId: string,
 ) {
   const headers = { origin: "http://localhost:3100" };
+  const descriptions=new Map<Page,{url:string;data:any}>();
+  for(const page of [owner,other])page.on('request',req=>{if(req.url().startsWith('http://localhost:3100/api/v1/conversations/')&&req.url().endsWith('/call/signal')){const data=req.postDataJSON();if(data?.payload?.type!=='candidate'&&!descriptions.has(page))descriptions.set(page,{url:req.url(),data});}});
   const direct=(await owner.request.get('/api/v1/conversations').then(r=>r.json())).rooms.find((r:any)=>r.title==='Creative catch-up').id;
   const prior=await owner.request.post(`/api/v1/conversations/${direct}/call`,{headers,data:{allowDirect:true}}).then(r=>r.json());
   const replacement=await owner.request.post(`/api/v1/conversations/${direct}/call`,{headers,data:{allowDirect:true}}).then(r=>r.json());
@@ -120,6 +122,14 @@ export async function verifyCalls(
       .evaluate((v: HTMLVideoElement) => v.readyState >= 2 && v.videoWidth > 0);
   await expect.poll(() => videoReceived(owner), { timeout: 20000 }).toBe(true);
   await expect.poll(() => videoReceived(other), { timeout: 20000 }).toBe(true);
+  for(const sender of [owner,other]){
+    const replay=descriptions.get(sender);expect(replay).toBeTruthy();const recipient=sender===owner?other:owner;
+    const delivered=recipient.waitForResponse(async response=>{if(!response.url().includes('/call?')||response.status()!==200)return false;const json=await response.json();return json.signals?.some((s:any)=>s.payload.sdp===replay!.data.payload.sdp);});
+    expect((await sender.request.post(replay!.url,{headers,data:{...replay!.data,clientId:crypto.randomUUID()}})).ok()).toBeTruthy();await delivered;
+    await recipient.waitForResponse(response=>response.url().includes('/call?')&&response.status()===200);
+    await expect(recipient.locator('.call-tile figcaption').filter({hasText:'connected'})).toHaveCount(1);
+    await expect.poll(()=>videoReceived(recipient)).toBe(true);
+  }
   await owner
     .getByRole("button", { name: "Mute microphone", exact: true })
     .click();
